@@ -1,0 +1,24 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model DesignJob {
+  id               String   @id @default(uuid())
+  sessionId        String   @unique
+  userId          String?
+  originalImageUrl String
+  status          String   @default("pending")
+  progress        Int      @default(0)
+  analysis        String?
+  generatedImages String[] // Stored as JSON array
+  error          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

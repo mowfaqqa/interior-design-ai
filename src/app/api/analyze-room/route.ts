@@ -1,14 +1,15 @@
+// app/api/analyze-room/route.ts
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { unlink } from 'fs/promises'
+import { writeFile, unlink } from 'fs/promises'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-export const runtime = 'edge'
+export const runtime = 'nodejs' 
 
 export async function POST(request: Request) {
   try {
@@ -22,15 +23,18 @@ export async function POST(request: Request) {
       )
     }
 
-    // Save the file to a temporary location
+    // Create temporary file path
     const tempFilePath = join(tmpdir(), file.name)
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    await Bun.write(tempFilePath, buffer)
+
+    // Write file using Node.js fs
+    await writeFile(tempFilePath, buffer)
 
     // Analyze the image with OpenAI
     const response = await openai.chat.completions.create({
-      model: 'gpt-4-vision-preview',
+    model: "gpt-4o-mini",
+  store: true,
       messages: [
         {
           role: 'user',
@@ -38,13 +42,13 @@ export async function POST(request: Request) {
             {
               type: 'text',
               text: `Analyze this room image and provide design suggestions. Include:
-- Room type (living room, bedroom, kitchen, etc.)
-- Estimated dimensions
-- Current style (if any)
-- Lighting conditions
-- 3 design suggestions with styles (e.g., "Modern Scandinavian with light wood tones")
-- Color palette recommendations
-- Furniture placement ideas`,
+  - Room type (living room, bedroom, kitchen, etc.)
+  - Estimated dimensions
+  - Current style (if any)
+  - Lighting conditions
+  - 3 design suggestions with styles (e.g., "Modern Scandinavian with light wood tones")
+  - Color palette recommendations
+  - Furniture placement ideas`,
             },
             {
               type: 'image_url',
