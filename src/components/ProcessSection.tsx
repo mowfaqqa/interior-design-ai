@@ -108,7 +108,7 @@ const ProcessSection: React.FC = () => {
           </p>
 
           {/* CTA Button */}
-          <button className="bg-orange-400 hover:bg-orange-500 text-white px-8 py-4 rounded-full font-medium text-lg transition-colors inline-flex items-center shadow-lg hover:shadow-xl" onClick={() => router.push('/')}>
+          <button className="bg-orange-400 hover:bg-orange-500 text-white px-8 py-4 rounded-full font-medium text-lg transition-colors inline-flex items-center shadow-lg hover:shadow-xl" onClick={() => router.push('/generate')}>
             Générez des rendus maintenant
             <svg className="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"/>

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import ImageUpload from '@/components/ImageUpload'
 import ResultsDisplay from '@/components/ResultsDisplay'
 
-export default function HomePage() {
+export default function GeneratePage() {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
