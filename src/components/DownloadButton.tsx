@@ -8,7 +8,7 @@ export default function DownloadButton({ imageUrl }: { imageUrl: string }) {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `interior-design-${Date.now()}.jpg`
+      a.download = `aino-interior-design-${Date.now()}.jpg`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -21,8 +21,8 @@ export default function DownloadButton({ imageUrl }: { imageUrl: string }) {
   return (
     <button
       onClick={handleDownload}
-      className="p-2 bg-white rounded-full shadow hover:bg-gray-100"
-      title="Download"
+      className="p-3 bg-orange-400 hover:bg-orange-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+      title="Télécharger l'image"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
