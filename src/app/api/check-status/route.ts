@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { getJobBySessionId } from '@/libs/models/DesignJob'
 import { redis } from '@/libs/redis'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs' // Changed from 'edge' to 'nodejs'
 
 export async function POST(request: Request) {
   try {

@@ -2,8 +2,58 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { pollJobStatus } from "@/libs/polling";
 import DownloadButton from "./DownloadButton";
+
+interface JobStatus {
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  progress: number
+  analysis?: string
+  generatedImages?: string[]
+  error?: string
+}
+
+// Simple polling function to replace the external dependency
+async function pollJobStatus(
+  sessionId: string, 
+  options: { onProgress: (progress: number) => void; timeout: number }
+): Promise<JobStatus> {
+  const startTime = Date.now()
+  
+  while (Date.now() - startTime < options.timeout) {
+    try {
+      const response = await fetch('/api/check-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId })
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Status check failed: ${response.status}`)
+      }
+      
+      const result: JobStatus = await response.json()
+      
+      // Update progress
+      options.onProgress(result.progress)
+      
+      // If completed or failed, return result
+      if (result.status === 'completed' || result.status === 'failed') {
+        return result
+      }
+      
+      // Wait before next poll
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+    } catch (error) {
+      console.error('Polling error:', error)
+      // Continue polling on error
+      await new Promise(resolve => setTimeout(resolve, 5000))
+    }
+  }
+  
+  // Timeout reached
+  throw new Error('Timeout: Job took too long to complete')
+}
 
 export default function ResultsDisplay({ sessionId }: { sessionId: string }) {
   const [progress, setProgress] = useState(0);
@@ -15,8 +65,16 @@ export default function ResultsDisplay({ sessionId }: { sessionId: string }) {
     generatedImages?: string[];
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Fix hydration by ensuring we're on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient || !sessionId) return;
+
     const fetchData = async () => {
       try {
         const result = await pollJobStatus(sessionId, {
@@ -39,7 +97,19 @@ export default function ResultsDisplay({ sessionId }: { sessionId: string }) {
     };
 
     fetchData();
-  }, [sessionId]);
+  }, [sessionId, isClient]);
+
+  // Show loading during hydration
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-orange-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (status === "pending" || status === "processing") {
     return (
@@ -118,9 +188,9 @@ export default function ResultsDisplay({ sessionId }: { sessionId: string }) {
                 <h2 className="text-2xl font-medium text-gray-800">Analyse de votre espace</h2>
               </div>
               <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                   {results.analysis}
-                </p>
+                </div>
               </div>
             </div>
 
@@ -143,6 +213,7 @@ export default function ResultsDisplay({ sessionId }: { sessionId: string }) {
                         src={img}
                         alt={`Design ${i + 1}`}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
                       <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
