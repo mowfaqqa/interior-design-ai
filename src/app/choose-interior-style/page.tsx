@@ -15,7 +15,7 @@ const chooseinteriorstyle: React.FC = () => {
     <>
       <PageNavbar />
       <MainPageWrapper head="Choisissez un style d’intérieur">
-        <ScreenScale className="!grid grid-cols-5 !w-[98.4rem] gap-[2.1rem] max-lg:grid-cols-3">
+        <ScreenScale className="!grid grid-cols-5 !w-[98.4rem] gap-[2.1rem] max-lg:grid-cols-3 max-lg:gap-[1rem] max-lg:!w-[83.60945273631842%] max-lg:max-w-[unset]">
           <InteriorStyleCard
             src="/Art déco.png"
             style="Art déco"

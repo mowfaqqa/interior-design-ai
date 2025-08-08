@@ -30,3 +30,7 @@ input::-webkit-inner-spin-button,
 input::-webkit-outer-spin-button {
   display: none !important;
 }
+
+.bl {
+  background: linear-gradient(0deg, #7c7c7c, #7c7c7c), rgba(28, 28, 28, 0.9);
+}

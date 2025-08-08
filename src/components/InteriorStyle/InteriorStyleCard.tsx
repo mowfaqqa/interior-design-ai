@@ -14,9 +14,9 @@ const InteriorStyleCard: React.FC<{
       <img
         src={src}
         alt={src.split(".")[0]}
-        className="inline-block w-full h-[17.5rem] transition-all group-hover:scale-105 object-fill group-hover:grayscale-50"
+        className="inline-block w-full h-[17.5rem]  transition-all group-hover:scale-105 object-fill group-hover:grayscale-50 max-lg:h-[10.7rem]"
       />
-      <p className="py-[2.1rem_2.7rem] fustat text-[1.6rem] text-center text-white">
+      <p className="py-[2.1rem_2.7rem] fustat text-[1.6rem] text-center text-white max-lg:py-[1.35rem] max-lg:text-[1.2rem] max-lg:font-semibold max-lg:leading-[1.2rem]">
         {style}
       </p>
     </article>
