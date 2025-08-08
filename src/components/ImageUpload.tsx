@@ -12,7 +12,7 @@ interface ImageUploadProps {
 export default function ImageUpload({ onComplete, onError }: ImageUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [analysisStep, setAnalysisStep] = useState<string>("");
 

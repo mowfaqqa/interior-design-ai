@@ -3,3 +3,30 @@
 body {
   background-color: #f8f9fa;
 }
+
+html {
+  font-size: 10px;
+}
+
+/* .t50 */
+.t-y-50 {
+  transform: translateY(-50%);
+}
+
+textarea {
+  resize: none;
+}
+
+/* FONTS */
+.fustat {
+  font-family: "Fustat", sans-serif;
+}
+.jost {
+  font-family: "Jost", sans-serif;
+}
+
+/* NUMBER INPUTS */
+input::-webkit-inner-spin-button,
+input::-webkit-outer-spin-button {
+  display: none !important;
+}
