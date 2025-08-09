@@ -19,7 +19,7 @@ const FeaturesCards: React.FC = () => {
       description: "Refresh Your Interior With New design Flooring Looking to install new interior look.",
       ctaText: "Générer des rendus",
       ctaLink: "/generate-renders",
-      imageSrc: "/assets/img-1.png", // Replace with your actual image path
+      imageSrc: "/assets/img-1.png",
       imageAlt: "Interior rendering showing modern living room design"
     },
     {
@@ -28,7 +28,7 @@ const FeaturesCards: React.FC = () => {
       description: "Refresh Your Interior With New design Flooring Looking to install new interior look.",
       ctaText: "Essayer",
       ctaLink: "/personalization",
-      imageSrc: "/assets/img-2.png", // Replace with your actual image path
+      imageSrc: "/assets/img-2.png",
       imageAlt: "Personalized interior design with custom furniture selection"
     },
     {

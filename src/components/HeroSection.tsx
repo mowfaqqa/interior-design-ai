@@ -110,7 +110,7 @@ const HeroSection: React.FC = () => {
           {/* Generator Button */}
           <button
             className="bg-orange-400 hover:bg-orange-500 text-white px-6 py-2 rounded-full font-medium transition-colors flex items-center"
-            onClick={() => router.push("/generate")}
+            onClick={() => router.push("/welcome")}
           >
             Generator
             <svg
