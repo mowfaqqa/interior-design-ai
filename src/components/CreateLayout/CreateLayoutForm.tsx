@@ -16,8 +16,8 @@ const CreateLayoutForm: React.FC<{
   }
 
   const xml: React.ReactElement = (
-    <form className="w-[33.4rem]">
-      <h2 className="fustat font-semibold text-[2.4rem] leading-[120%] tracking-[-0.02em] text-white mb-[1.4rem]">
+     <form className="w-[33.4rem] max-lg:w-[83.60945273631842%]">
+      <h2 className="fustat font-semibold text-[2.4rem] leading-[120%] tracking-[-0.02em] text-white mb-[1.4rem] max-lg:text-center max-lg:mb-[1.2rem]">
         Créez votre aménagement
       </h2>
       {/* UPLOAD SECTION */}
