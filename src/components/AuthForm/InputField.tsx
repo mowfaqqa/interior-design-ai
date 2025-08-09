@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState } from "react";
 
 const InputField: React.FC<{
@@ -7,10 +8,10 @@ const InputField: React.FC<{
   placeholder: string;
   type: string;
 }> = ({ id, label, className, type, placeholder }) => {
-  //SELECT & FILE STATES
-  let selectValue, setSelectValue, file, setFile: any;
-  if (type === "select") [selectValue, setSelectValue] = useState("");
-  if (type === "file") [file, setFile] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectValue, setSelectValue] = useState("");
+  const [file, setFile] = useState("");
+
   const xml = (
     <div className={className}>
       <label
@@ -61,10 +62,12 @@ const InputField: React.FC<{
           <label htmlFor={id} className="flex-grow inline-block">
             {file ? file : placeholder}
           </label>
-          <img
+          <Image
             src="/upload.png"
             alt="upload"
-            className="w-[1.6rem] h-[1.6rem] inline-block"
+            width={16}
+            height={16}
+            className="inline-block"
           />
           <input
             type={type}

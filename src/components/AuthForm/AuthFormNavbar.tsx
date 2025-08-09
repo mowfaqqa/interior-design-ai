@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const AuthFormNavbar: React.FC<{ path?: string; className?: string }> = ({
@@ -13,10 +14,12 @@ const AuthFormNavbar: React.FC<{ path?: string; className?: string }> = ({
     >
       <nav className="w-[129.3rem] max-w-[95%] flex justify-between items-center mx-auto">
         <div className="relative">
-          <img
+          <Image
             src="/logo-white.png"
             alt=""
-            className="my-[1.3rem] w-[17.5rem] h-[3.3rem] inline-block"
+            width={175}
+            height={33}
+            className="my-[1.3rem] inline-block"
           />
           <Link
             href={path}

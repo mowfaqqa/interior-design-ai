@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import ScreenScale from "../ScreenScale";
 
 const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
@@ -15,10 +16,13 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
       >
         {/* IMAGE */}
         <div className="relative my-[1.5rem] max-lg:w-full max-lg:m-0 max-lg:py-[1rem]">
-          <img
+          <Image
             src="/logo-white.png"
             alt=""
-            className="w-[21rem] h-[4rem] block max-lg:w-[83.60945273631842%] max-lg:mx-auto max-lg:h-[6.4rem] max-lg:max-w-[33.611rem]"
+            width={210}
+            height={40}
+            className="block max-lg:w-[83.60945273631842%] max-lg:mx-auto max-lg:h-[6.4rem] max-lg:max-w-[33.611rem]"
+            priority
           />
           <Link
             href="/"
@@ -29,10 +33,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
         {/* LINKS */}
         <ul className="flex max-lg:hidden">
           <li className="relative mr-[6.91rem] max-lg:text-center max-lg:m-0">
-            <img
+            <Image
               src="/home.png"
               alt="home"
-              className="w-[1.955rem] h-[2.2rem]"
+              width={19.55}
+              height={22}
+              className=""
             />
             <Link
               href="/"
@@ -40,10 +46,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
             ></Link>
           </li>
           <li className="relative mr-[6.426rem] max-lg:m-0">
-            <img
+            <Image
               src="/tag.png"
-              alt="home"
-              className="w-[2.271rem] h-[2.3rem]"
+              alt="tag"
+              width={22.71}
+              height={23}
+              className=""
             />
             <Link
               href="/"
@@ -51,10 +59,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
             ></Link>
           </li>
           <li className="relative mr-[6.99rem] max-lg:m-0">
-            <img
+            <Image
               src="/cart.png"
-              alt="home"
-              className="w-[2.379rem] h-[2.3rem]"
+              alt="cart"
+              width={23.79}
+              height={23}
+              className=""
             />
             <Link
               href="/"
@@ -62,10 +72,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
             ></Link>
           </li>
           <li className="relative">
-            <img
+            <Image
               src="/user-dark.png"
-              alt="home"
-              className="w-[2.469rem] h-[2.5rem]"
+              alt="user"
+              width={24.69}
+              height={25}
+              className=""
             />
             <Link
               href="/"
@@ -78,10 +90,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
         <div className="max-lg:block hidden bl max-lg:fixed max-lg:bottom-0 max-lg:left-0 w-full max-lg:bg-blend-overlay max-lg:backdrop-blur-[2.5rem]">
           <ul className="flex mx-auto w-[74.06467661691542%] max-lg:justify-between max-lg:h-[8rem] max-lg:items-center ">
             <li className="relative mr-[6.91rem] max-lg:text-center max-lg:m-0">
-              <img
+              <Image
                 src="/home.png"
                 alt="home"
-                className="w-[1.955rem] h-[2.2rem] max-lg:w-[1.98rem] block"
+                width={19.55}
+                height={22}
+                className="max-lg:w-[1.98rem] block"
               />
               <Link
                 href="/"
@@ -89,10 +103,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
               ></Link>
             </li>
             <li className="relative mr-[6.426rem] max-lg:m-0">
-              <img
+              <Image
                 src="/tag.png"
-                alt="home"
-                className="w-[2.271rem] h-[2.3rem] max-lg:w-[2.3rem] block"
+                alt="tag"
+                width={22.71}
+                height={23}
+                className="max-lg:w-[2.3rem] block"
               />
               <Link
                 href="/"
@@ -100,10 +116,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
               ></Link>
             </li>
             <li className="relative mr-[6.99rem] max-lg:m-0">
-              <img
+              <Image
                 src="/cart.png"
-                alt="home"
-                className="w-[2.379rem] h-[2.3rem] max-lg:w-[2.41rem] block"
+                alt="cart"
+                width={23.79}
+                height={23}
+                className="max-lg:w-[2.41rem] block"
               />
               <Link
                 href="/"
@@ -111,10 +129,12 @@ const PageNavbar: React.FC<{ className?: string }> = ({ className = "" }) => {
               ></Link>
             </li>
             <li className="relative">
-              <img
+              <Image
                 src="/user-dark.png"
-                alt="home"
-                className="w-[2.469rem] h-[2.5rem] max-lg:w-[2.5rem] block"
+                alt="user"
+                width={24.69}
+                height={25}
+                className="max-lg:w-[2.5rem] block"
               />
               <Link
                 href="/"

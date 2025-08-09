@@ -1,3 +1,4 @@
+import Image from "next/image";
 import AuthSubmitButton from "../AuthForm/AuthSubmitButton";
 import InputField from "../AuthForm/InputField";
 
@@ -34,7 +35,7 @@ const CreateLayoutForm: React.FC<{
           {!img?.value && (
             <>
               <span className="">Choisissez un ou des fichiers</span>
-              <img src="/upload.png" alt="upload" />
+              <Image src="/upload.png" alt="upload" width={16} height={16} />
             </>
           )}
           {img?.value && img.value}

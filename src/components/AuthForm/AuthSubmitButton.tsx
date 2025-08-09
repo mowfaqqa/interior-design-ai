@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const AuthSubmitButton: React.FC<{
   children: React.ReactNode;
   className?: string;
@@ -12,7 +14,16 @@ const AuthSubmitButton: React.FC<{
       }
     >
       {children}
-      {img && <img src={img} alt={img.split(".")[0]} />}
+      {img && (
+        <Image
+          src={img}
+          alt={img.split(".")[0]}
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="w-auto h-auto"
+        />
+      )}
     </button>
   );
   return xml;
