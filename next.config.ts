@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   remotePatterns: [
     {
       protocol: "https",
-      hostname: "**", // Allow all HTTPS domains for now (for MVP)
+      hostname: "**",
     },
   ],
 };

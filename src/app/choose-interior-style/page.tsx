@@ -5,7 +5,7 @@ import MainPageWrapper from "@/components/WelcomePage/MainPageWrapper";
 import PageNavbar from "@/components/WelcomePage/PageNavbar";
 import { useState } from "react";
 
-const chooseinteriorstyle: React.FC = () => {
+const Chooseinteriorstyle: React.FC = () => {
   const [selected, setSelected] = useState<string>("");
   // SELECT A STYLE
   const selectStyle = (style: string): void => {
@@ -83,4 +83,4 @@ const chooseinteriorstyle: React.FC = () => {
   return xml;
 };
 
-export default chooseinteriorstyle;
+export default Chooseinteriorstyle;

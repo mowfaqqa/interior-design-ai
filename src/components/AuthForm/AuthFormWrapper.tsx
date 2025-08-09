@@ -1,6 +1,6 @@
-import Link from "next/link";
 import React from "react";
 import AuthFormNavbar from "./AuthFormNavbar";
+import Image from "next/image";
 
 const AuthFormWrapper: React.FC<{
   children: React.ReactNode;
@@ -15,9 +15,13 @@ const AuthFormWrapper: React.FC<{
           className
         }
       >
-        <img
+        <Image
           src="/FrameShowcase.png"
-          className="absolute w-full h-full top-0 left-0 blur-[2rem]"
+          alt=""
+          fill
+          className="blur-[2rem]"
+          priority={false}
+          quality={75}
         />
         {children}
       </section>
