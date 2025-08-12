@@ -3,7 +3,7 @@ import ScreenScale from "../ScreenScale";
 
 const MainWelcomePage: React.FC = () => {
   const xml: React.ReactElement = (
-    <main className="h-[calc(100dvh-7rem)] bg-[#242426] pt-[5.5rem] max-lg:pt-[2.5rem]">
+    <main className="h-[calc(100dvh-7rem)] bg-[#242426] pt-[5.5rem] max-lg:pt-[2.5rem] max-lg:min-h-[calc(100dvh-8.4rem)] max-lg:h-auto max-lg:pb-[8.5rem]">
       <h2 className="mb-[4.1rem] font-semibold text-[2.4rem] leading-[120%] text-center tracking-[-0.02em] text-white fustat max-lg:mb-[1.7rem]">
         Bienvenue
       </h2>
