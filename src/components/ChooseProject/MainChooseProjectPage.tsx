@@ -10,7 +10,7 @@ const MainChooseProjectPage: React.FC = () => {
         <Link
           href={"/choose-interior-style"}
           passHref
-          className="w-full flex justify-center items-center"
+          className="w-full flex-[1_0_0] flex justify-center items-center block"
         >
           <OptionBox className="cursor-pointer h-full">
             <span className="fustat font-bold text-[1.8rem] text-white text-center">
@@ -21,7 +21,7 @@ const MainChooseProjectPage: React.FC = () => {
         <Link
           href={"/choose-interior-style"}
           passHref
-          className="w-full flex justify-center items-center"
+          className="w-full flex-[1_0_0] flex justify-center items-center block"
         >
           <OptionBox className="cursor-pointer h-full">
             <span className="fustat font-bold text-[1.8rem] text-white text-center">

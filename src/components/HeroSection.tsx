@@ -9,6 +9,7 @@ const HeroSection: React.FC = () => {
     <div
       className="relative min-h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: 'url("/assets/hero.png")' }}
+      id="hero"
     >
       {/* Top Bar */}
       <div className="bg-orange-400 px-4 py-2 flex justify-between items-center">

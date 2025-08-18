@@ -6,7 +6,7 @@ const MainPageWrapper: React.FC<{
   const xml: React.ReactElement = (
     <main
       className={
-        "h-[calc(100dvh-7rem)] bg-[#242426] pt-[5.5rem] max-lg:pt-[2.5rem] max-lg:h-[calc(100dvh-8.4rem)] " +
+        "h-[calc(100dvh-7rem)] bg-[#242426] pt-[5.5rem] max-lg:pt-[2.5rem] max-lg:min-h-[calc(100dvh-8.4rem)] max-lg:h-auto max-lg:pb-[8.5rem] " +
         className
       }
     >
