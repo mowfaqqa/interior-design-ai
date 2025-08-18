@@ -1,25 +1,162 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
+import React, { useState } from "react";
 import Image from "next/image";
 import AuthSubmitButton from "../AuthForm/AuthSubmitButton";
-import InputField from "../AuthForm/InputField";
+import {
+  useCreateRoom,
+  useUploadRoomImage,
+  useGenerateDesign,
+} from "@/lib/hooks/api";
+import { CreateRoomDto, RoomType, GenerateDesignDto } from "@/types/api";
+import { toast } from "react-hot-toast"; // You'll need to install this: npm install react-hot-toast
 
-const CreateLayoutForm: React.FC<{
+interface CreateLayoutFormProps {
   setImg: React.Dispatch<React.SetStateAction<{ src: string; value: string }>>;
   img: { src: string; value: string };
-}> = ({ setImg, img }) => {
-  // CHOOSE FILE
+  selectedProjectId?: string; // Project ID passed from parent
+}
+
+const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
+  setImg,
+  img,
+  selectedProjectId,
+}) => {
+  const [formData, setFormData] = useState<Partial<CreateRoomDto>>({
+    projectId: selectedProjectId || "",
+    type: RoomType.LIVING_ROOM,
+    length: 0,
+    width: 0,
+    height: 0,
+    materials: [],
+    ambientColor: "",
+    freePrompt: "",
+  });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // React Query hooks
+  const createRoomMutation = useCreateRoom();
+  const uploadImageMutation = useUploadRoomImage();
+  const generateDesignMutation = useGenerateDesign();
+
+  // Handle file selection
   function chooseFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
       setImg({ src: url, value: file.name });
+      setSelectedFile(file);
     }
   }
 
-  const xml: React.ReactElement = (
-    <form className="w-[33.4rem]">
+  // Handle form field changes
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Handle materials input (convert comma-separated string to array)
+  const handleMaterialsChange = (value: string) => {
+    const materials = value
+      .split(",")
+      .map((m) => m.trim())
+      .filter((m) => m.length > 0);
+    handleInputChange("materials", materials);
+  };
+
+  // Validate form data
+  const validateForm = (): boolean => {
+    if (!formData.projectId) {
+      toast.error("Veuillez sélectionner un projet");
+      return false;
+    }
+    if (!formData.type) {
+      toast.error("Veuillez sélectionner le type de pièce");
+      return false;
+    }
+    if (!formData.length || !formData.width || !formData.height) {
+      toast.error("Veuillez renseigner les dimensions de la pièce");
+      return false;
+    }
+    if (!formData.materials || formData.materials.length === 0) {
+      toast.error("Veuillez spécifier au moins un matériau");
+      return false;
+    }
+    return true;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsGenerating(true);
+
+    try {
+      // Step 1: Create the room
+      const room = await createRoomMutation.mutateAsync(
+        formData as CreateRoomDto
+      );
+      toast.success("Pièce créée avec succès!");
+
+      // Step 2: Upload image if selected
+      let imageUrl = "";
+      if (selectedFile) {
+        const uploadResult = await uploadImageMutation.mutateAsync({
+          file: selectedFile,
+          roomId: room.id,
+        });
+        imageUrl = uploadResult.url;
+        toast.success("Image uploadée avec succès!");
+      }
+
+      // Step 3: Generate AI design
+      const designData: GenerateDesignDto = {
+        roomId: room.id,
+        customPrompt: formData.freePrompt,
+        aiProvider: "replicate", // Default to replicate
+      };
+
+      const design = await generateDesignMutation.mutateAsync(designData);
+      toast.success(
+        "Génération du rendu initiée! Cela peut prendre quelques minutes."
+      );
+      console.log("Design generated:", design);
+      // Reset form
+      setFormData({
+        projectId: selectedProjectId || "",
+        type: RoomType.LIVING_ROOM,
+        length: 0,
+        width: 0,
+        height: 0,
+        materials: [],
+        ambientColor: "",
+        freePrompt: "",
+      });
+      setImg({ src: "", value: "" });
+      setSelectedFile(null);
+    } catch (error: any) {
+      console.error("Error creating layout:", error);
+      toast.error(
+        error.response?.data?.message || "Erreur lors de la création du rendu"
+      );
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <form className="w-[33.4rem]" onSubmit={handleSubmit}>
       <h2 className="fustat font-semibold text-[2.4rem] leading-[120%] tracking-[-0.02em] text-white mb-[1.4rem]">
         Créez votre aménagement
       </h2>
+
       {/* UPLOAD SECTION */}
       <div className="mb-[1.5rem]">
         <label
@@ -30,15 +167,21 @@ const CreateLayoutForm: React.FC<{
         </label>
         <label
           htmlFor="upload"
-          className="bg-[#1E1E1E] border-dashed border-[0.1rem] border-[#444444] rounded-[0.8rem] h-[15.7rem] flex justify-center items-center  text-center font-[Inter] text-[1.6rem] text-white/40 gap-[1rem]"
+          className="bg-[#1E1E1E] border-dashed border-[0.1rem] border-[#444444] rounded-[0.8rem] h-[15.7rem] flex justify-center items-center text-center font-[Inter] text-[1.6rem] text-white/40 gap-[1rem] cursor-pointer hover:border-[#666666] transition-colors"
         >
-          {!img?.value && (
+          {!img?.value ? (
             <>
-              <span className="">Choisissez un ou des fichiers</span>
+              <span>Choisissez un ou des fichiers</span>
               <Image src="/upload.png" alt="upload" width={16} height={16} />
             </>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <span className="text-white">{img.value}</span>
+              <span className="text-sm text-green-400">
+                Fichier sélectionné
+              </span>
+            </div>
           )}
-          {img?.value && img.value}
         </label>
         <input
           type="file"
@@ -49,78 +192,141 @@ const CreateLayoutForm: React.FC<{
           accept="image/*"
         />
       </div>
-      {/*  */}
-      <InputField
-        type="select"
-        label="Sélectionnez le type de pièce"
-        id="piece"
-        placeholder="Type de la pièce"
-        className="mb-[1.5rem]"
-      />
+
+      {/* ROOM TYPE */}
+      <div className="mb-[1.5rem]">
+        <label className="font-[Inter] text-[1.6rem] leading-[140%] text-white inline-block mb-[0.8rem]">
+          Sélectionnez le type de pièce
+        </label>
+        <select
+          className="w-full px-[1.6rem] py-[1rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] text-[1.6rem] text-white"
+          value={formData.type}
+          onChange={(e) =>
+            handleInputChange("type", e.target.value as RoomType)
+          }
+          required
+        >
+          <option value={RoomType.LIVING_ROOM}>Salon</option>
+          <option value={RoomType.BEDROOM}>Chambre</option>
+          <option value={RoomType.KITCHEN}>Cuisine</option>
+          <option value={RoomType.BATHROOM}>Salle de bain</option>
+          <option value={RoomType.OFFICE}>Bureau</option>
+          <option value={RoomType.DINING_ROOM}>Salle à manger</option>
+          <option value={RoomType.BALCONY}>Balcon</option>
+          <option value={RoomType.STUDY}>Bureau d&apos;étude</option>
+          <option value={RoomType.HALLWAY}>Couloir</option>
+          <option value={RoomType.OTHER}>Autre</option>
+        </select>
+      </div>
+
       {/* DIMENSIONS */}
       <div className="mb-[1.5rem]">
-        <label
-          htmlFor="dimension"
-          className="mb-[0.8rem] text-white text-[1.6rem] leading-[140%] inline-block"
-        >
+        <label className="mb-[0.8rem] text-white text-[1.6rem] leading-[140%] inline-block">
           Dimensions de la pièce en mètre
         </label>
-        {/* SIZES */}
         <div className="flex gap-[0.9rem]">
           <input
             type="number"
+            step="0.1"
+            min="0.1"
             className="px-[1.6rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] w-[calc(100%/3)] h-[4rem] text-[1.6rem] leading-[100%] text-white placeholder:text-white/40"
             placeholder="Long."
-            id="length"
+            value={formData.length || ""}
+            onChange={(e) =>
+              handleInputChange("length", parseFloat(e.target.value) || 0)
+            }
+            required
           />
           <input
             type="number"
+            step="0.1"
+            min="0.1"
             className="px-[1.6rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] w-[calc(100%/3)] h-[4rem] text-[1.6rem] leading-[100%] text-white placeholder:text-white/40"
             placeholder="Large."
-            id="width"
+            value={formData.width || ""}
+            onChange={(e) =>
+              handleInputChange("width", parseFloat(e.target.value) || 0)
+            }
+            required
           />
           <input
             type="number"
+            step="0.1"
+            min="0.1"
             className="px-[1.6rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] w-[calc(100%/3)] h-[4rem] text-[1.6rem] leading-[100%] text-white placeholder:text-white/40"
             placeholder="Haut."
-            id="height"
+            value={formData.height || ""}
+            onChange={(e) =>
+              handleInputChange("height", parseFloat(e.target.value) || 0)
+            }
+            required
           />
         </div>
       </div>
-      {/*  */}
-      <InputField
-        label="Matériaux souhaités"
-        id="fill__"
-        type="select"
-        placeholder="Matériaux souhaités"
-        className="mb-[1.5rem]"
-      />
-      {/*   */}
-      <InputField
-        label="Couleur d’ambiance"
-        id="fill__"
-        type="text"
-        placeholder="Couleur d’ambiance"
-        className="mb-[1.5rem]"
-      />
-      {/*  */}
-      <InputField
-        label="Prompt libre"
-        id="fill__"
-        type="textarea"
-        placeholder="Décrivez plus en détail ce que vous souhaitez..."
-        className="mb-[1.5rem]"
-      />
+
+      {/* MATERIALS */}
+      <div className="mb-[1.5rem]">
+        <label className="font-[Inter] text-[1.6rem] leading-[140%] text-white inline-block mb-[0.8rem]">
+          Matériaux souhaités
+        </label>
+        <input
+          type="text"
+          className="w-full px-[1.6rem] py-[1rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] text-[1.6rem] text-white placeholder:text-white/40"
+          placeholder="bois, marbre, acier (séparés par des virgules)"
+          onChange={(e) => handleMaterialsChange(e.target.value)}
+          required
+        />
+      </div>
+
+      {/* AMBIENT COLOR */}
+      <div className="mb-[1.5rem]">
+        <label className="font-[Inter] text-[1.6rem] leading-[140%] text-white inline-block mb-[0.8rem]">
+          Couleur d&apos;ambiance
+        </label>
+        <input
+          type="text"
+          className="w-full px-[1.6rem] py-[1rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] text-[1.6rem] text-white placeholder:text-white/40"
+          placeholder="blanc chaud, bleu doux, etc."
+          value={formData.ambientColor || ""}
+          onChange={(e) => handleInputChange("ambientColor", e.target.value)}
+        />
+      </div>
+
+      {/* FREE PROMPT */}
+      <div className="mb-[1.5rem]">
+        <label className="font-[Inter] text-[1.6rem] leading-[140%] text-white inline-block mb-[0.8rem]">
+          Prompt libre
+        </label>
+        <textarea
+          className="w-full px-[1.6rem] py-[1rem] bg-[#1E1E1E] border border-[#444444] rounded-[0.8rem] text-[1.6rem] text-white placeholder:text-white/40 min-h-[8rem] resize-vertical"
+          placeholder="Décrivez plus en détail ce que vous souhaitez..."
+          value={formData.freePrompt || ""}
+          onChange={(e) => handleInputChange("freePrompt", e.target.value)}
+        />
+      </div>
+
       {/* SUBMIT */}
-      <AuthSubmitButton
-        img="/btn-stars.png"
-        className="flex justify-center items-center [&>img]:brightness-0 py-[1.5rem] border-none [&>img]:w-[2.1rem] [&>img]:h-[2rem]"
+      <button
+        type="submit"
+        className="flex justify-center items-center py-[1.5rem] border-none disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={
+          isGenerating ||
+          createRoomMutation.isPending ||
+          uploadImageMutation.isPending ||
+          generateDesignMutation.isPending
+        }
       >
-        Générez votre rendu
-      </AuthSubmitButton>
+        <Image
+          src="/btn-stars.png"
+          alt=""
+          width={21}
+          height={20}
+          className="brightness-0 w-[2.1rem] h-[2rem] mr-2"
+        />
+        {isGenerating ? "Génération en cours..." : "Générez votre rendu"}
+      </button>
     </form>
   );
-  return xml;
 };
 
 export default CreateLayoutForm;
