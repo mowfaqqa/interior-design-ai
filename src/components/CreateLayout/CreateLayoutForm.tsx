@@ -2,9 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import AuthSubmitButton from "../AuthForm/AuthSubmitButton";
 import {
   useCreateRoom,
   useUploadRoomImage,
@@ -42,6 +41,22 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
   const uploadImageMutation = useUploadRoomImage();
   const generateDesignMutation = useGenerateDesign();
 
+  // Update formData when selectedProjectId changes
+  useEffect(() => {
+    if (selectedProjectId) {
+      setFormData((prev) => ({
+        ...prev,
+        projectId: selectedProjectId,
+      }));
+      console.log("Updated formData with projectId:", selectedProjectId);
+    }
+  }, [selectedProjectId]);
+
+  // Debug: Log formData changes
+  useEffect(() => {
+    console.log("Current formData:", formData);
+  }, [formData]);
+
   // Handle file selection
   function chooseFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -71,16 +86,28 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
 
   // Validate form data
   const validateForm = (): boolean => {
+    console.log("Validating form with projectId:", formData.projectId);
+
     if (!formData.projectId) {
-      toast.error("Veuillez sélectionner un projet");
+      toast.error(
+        "Veuillez sélectionner un projet. Assurez-vous d'avoir suivi le processus complet de création de projet."
+      );
       return false;
     }
     if (!formData.type) {
       toast.error("Veuillez sélectionner le type de pièce");
       return false;
     }
-    if (!formData.length || !formData.width || !formData.height) {
-      toast.error("Veuillez renseigner les dimensions de la pièce");
+    if (!formData.length || formData.length <= 0) {
+      toast.error("Veuillez renseigner une longueur valide pour la pièce");
+      return false;
+    }
+    if (!formData.width || formData.width <= 0) {
+      toast.error("Veuillez renseigner une largeur valide pour la pièce");
+      return false;
+    }
+    if (!formData.height || formData.height <= 0) {
+      toast.error("Veuillez renseigner une hauteur valide pour la pièce");
       return false;
     }
     if (!formData.materials || formData.materials.length === 0) {
@@ -94,26 +121,32 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log("Form submitted with data:", formData);
+
     if (!validateForm()) return;
 
     setIsGenerating(true);
 
     try {
       // Step 1: Create the room
+      console.log("Creating room with data:", formData);
       const room = await createRoomMutation.mutateAsync(
         formData as CreateRoomDto
       );
       toast.success("Pièce créée avec succès!");
+      console.log("Room created:", room);
 
       // Step 2: Upload image if selected
       let imageUrl = "";
-      if (selectedFile) {
+      if (selectedFile && room.id) {
+        console.log("Uploading image for room:", room.id);
         const uploadResult = await uploadImageMutation.mutateAsync({
           file: selectedFile,
           roomId: room.id,
         });
         imageUrl = uploadResult.url;
         toast.success("Image uploadée avec succès!");
+        console.log("Image uploaded:", uploadResult);
       }
 
       // Step 3: Generate AI design
@@ -123,11 +156,13 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
         aiProvider: "replicate", // Default to replicate
       };
 
+      console.log("Generating design with data:", designData);
       const design = await generateDesignMutation.mutateAsync(designData);
       toast.success(
         "Génération du rendu initiée! Cela peut prendre quelques minutes."
       );
       console.log("Design generated:", design);
+
       // Reset form
       setFormData({
         projectId: selectedProjectId || "",
@@ -143,12 +178,42 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
       setSelectedFile(null);
     } catch (error: any) {
       console.error("Error creating layout:", error);
-      toast.error(
-        error.response?.data?.message || "Erreur lors de la création du rendu"
-      );
+
+      // More detailed error handling
+      let errorMessage = "Erreur lors de la création du rendu";
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Display project info for debugging
+  const showProjectInfo = () => {
+    if (!selectedProjectId) {
+      return (
+        <div className="mb-[1.5rem] p-[1rem] bg-red-500/20 border border-red-500 rounded-[0.8rem]">
+          <p className="text-red-400 text-[1.4rem]">
+            ⚠️ Aucun projet sélectionné. Veuillez revenir en arrière et suivre
+            le processus de création de projet.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="mb-[1.5rem] p-[1rem] bg-green-500/20 border border-green-500 rounded-[0.8rem]">
+        <p className="text-green-400 text-[1.4rem]">
+          ✓ Projet ID: {selectedProjectId}
+        </p>
+      </div>
+    );
   };
 
   return (
@@ -156,6 +221,9 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
       <h2 className="fustat font-semibold text-[2.4rem] leading-[120%] tracking-[-0.02em] text-white mb-[1.4rem]">
         Créez votre aménagement
       </h2>
+
+      {/* PROJECT INFO DEBUG */}
+      {showProjectInfo()}
 
       {/* UPLOAD SECTION */}
       <div className="mb-[1.5rem]">
@@ -308,12 +376,13 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
       {/* SUBMIT */}
       <button
         type="submit"
-        className="flex justify-center items-center py-[1.5rem] border-none disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex justify-center items-center py-[1.5rem] border-none disabled:opacity-50 disabled:cursor-not-allowed w-full bg-[#f5f5f5] rounded-[0.8rem] text-[#1E1E1E] font-semibold text-[1.6rem] hover:bg-[#e5e5e5] transition-colors"
         disabled={
           isGenerating ||
           createRoomMutation.isPending ||
           uploadImageMutation.isPending ||
-          generateDesignMutation.isPending
+          generateDesignMutation.isPending ||
+          !selectedProjectId
         }
       >
         <Image
@@ -325,6 +394,12 @@ const CreateLayoutForm: React.FC<CreateLayoutFormProps> = ({
         />
         {isGenerating ? "Génération en cours..." : "Générez votre rendu"}
       </button>
+
+      {!selectedProjectId && (
+        <p className="text-red-400 text-[1.4rem] mt-[1rem] text-center">
+          Veuillez suivre le processus de création de projet depuis le début
+        </p>
+      )}
     </form>
   );
 };
