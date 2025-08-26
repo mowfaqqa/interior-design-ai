@@ -2,6 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const HeroSection: React.FC = () => {
   const router = useRouter();
@@ -13,12 +14,7 @@ const HeroSection: React.FC = () => {
     >
       {/* Top Bar */}
       <div className="bg-orange-400 px-4 py-2 flex justify-between items-center">
-        <div className="flex items-center text-white">
-          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-          </svg>
-          <span className="text-sm font-medium">1234567890</span>
-        </div>
+        <div className="flex items-center text-white"></div>
         <div className="flex space-x-3">
           <a
             href="#"
@@ -62,22 +58,13 @@ const HeroSection: React.FC = () => {
           <div className="flex items-center">
             <div className="text-white text-2xl font-bold mr-2">
               {/* Geometric logo shape */}
-              <svg
-                className="w-8 h-8 mr-2"
-                viewBox="0 0 40 40"
-                fill="currentColor"
-              >
-                <path d="M20 0L40 20L20 40L0 20Z" />
-                <path
-                  d="M20 8L32 20L20 32L8 20Z"
-                  fill="rgba(255,255,255,0.3)"
-                />
-              </svg>
+              <Image
+                src={"/logo-white.png"}
+                alt="Logo"
+                width={150}
+                height={50}
+              />
             </div>
-            <span className="text-white text-xl font-bold">AÏNO</span>
-            <span className="text-white text-sm italic ml-2 opacity-75">
-              lets do it together
-            </span>
           </div>
 
           {/* Navigation Links */}

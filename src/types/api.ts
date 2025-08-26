@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // API Response Types
-export interface ApiResponse <T = any> {
+export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
   data?: T;
@@ -22,17 +22,12 @@ export interface ValidationError {
   message: string;
 }
 
-// User Types
-export enum UserType {
-  INDIVIDUAL = "INDIVIDUAL",
-  BUSINESS = "BUSINESS",
-}
 
 export interface User {
   id: string;
   email: string;
   name: string;
-  userType: UserType;
+  userType: string;
   organization?: string;
   isVerified: boolean;
   createdAt: string;
@@ -174,7 +169,7 @@ export interface RegisterDto {
   email: string;
   name: string;
   password: string;
-  userType: UserType;
+  userType: string;
   organization?: string;
 }
 
