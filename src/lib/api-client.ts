@@ -3,7 +3,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import { authUtils, tokenStorage } from "./cookies";
 
 // API Configuration
-const API_BASE_URL = "http://localhost:3001/api/v1";
+const API_BASE_URL = "https://interior-be.onrender.com/api/v1";
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
