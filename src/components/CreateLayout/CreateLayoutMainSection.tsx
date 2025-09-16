@@ -1,61 +1,51 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+
+import React, { useState, Suspense } from "react";
+import Image from "next/image";
 import CreateLayoutForm from "./CreateLayoutForm";
 
-const CreateLayoutContent = () => {
-  const searchParams = useSearchParams();
-  const [img, setImg] = useState<{ src: string; value: string }>({
-    src: "",
-    value: "",
-  });
+function CreateLayoutContent() {
+  const [img, setImg] = useState<{ src: string; file: File } | null>(null);
 
-  // Get project ID from URL params
-  const selectedProjectId = searchParams.get("projectId");
-
-  useEffect(() => {
-    // Debug: Check if projectId is being received
-    console.log("Project ID from URL:", selectedProjectId);
-  }, [selectedProjectId]);
+  const chooseFile = (file: File | null) => {
+    if (file) {
+      const src = URL.createObjectURL(file);
+      setImg({ src, file });
+    }
+  };
 
   return (
-    <main className="flex gap-[3.5rem] p-[3.5rem] bg-[#242426] h-[calc(100dvh-7rem)] relative max-lg:px-0 max-lg:justify-center max-lg:items-center max-lg:pb-[9rem] max-lg:min-h-[calc(100dvh-7rem)] max-lg:h-auto">
-      <div className="w-[calc((100%-33.4rem)-3.5rem)] max-lg:hidden">
-        <input type="file" id="file" className="hidden" />
-        <div className="flex justify-center items-center w-full h-full bg-[#1E1E1E] border-dashed border-[0.1rem] border-[#444444]">
-          <span className="font-semibold text-[1.8rem] leading-[120%] tracking-[-.02em] text-white">
-            Votre rendu apparaitra ici
-          </span>
+    <div className="py-2">
+      <div className="flex flex-col md:flex-row gap-1">
+        {/* Left side: Image preview */}
+        <div className="flex-1 bg-gray-100 rounded-lg shadow-lg flex items-center justify-center">
+          {img ? (
+            <Image
+              src={img.src}
+              alt="Uploaded preview"
+              width={500}
+              height={500}
+              className="object-contain rounded-lg"
+              style={{ width: "auto", height: "auto" }}
+            />
+          ) : (
+            <p className="text-gray-500">Votre rendu apparaitra ici</p>
+          )}
+        </div>
+
+        {/* Right side: Form */}
+        <div className="rounded-lg shadow-lg bg-black/80">
+          <CreateLayoutForm chooseFile={chooseFile!} />
         </div>
       </div>
-      <CreateLayoutForm
-        setImg={setImg}
-        img={img}
-        selectedProjectId={selectedProjectId || undefined}
-      />
-      <div className="absolute top-[-1.6rem] left-[12.2rem] w-[22rem] pt-[2.3rem] pb-[0.7rem] rounded-[0.8rem] bg-[#979797] border border-[#444444] text-center z-[1] max-lg:hidden">
-        <span className="fustat text-[1.2rem] text-white font-semibold leading-[1.2rem]">
-          Créateur de rendu
-        </span>
-      </div>
-    </main>
-  );
-};
-
-const LoadingFallback = () => (
-  <main className="flex gap-[3.5rem] p-[3.5rem] bg-[#242426] h-[calc(100dvh-7rem)] relative max-lg:px-0 max-lg:justify-center max-lg:items-center max-lg:pb-[9rem] max-lg:min-h-[calc(100dvh-7rem)] max-lg:h-auto">
-    <div className="flex justify-center items-center w-full h-full">
-      <span className="text-white text-[1.6rem]">Chargement...</span>
     </div>
-  </main>
-);
+  );
+}
 
-const CreateLayoutMainSection = () => {
+export default function CreateLayoutMainSection() {
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={<div>Loading...</div>}>
       <CreateLayoutContent />
     </Suspense>
   );
-};
-
-export default CreateLayoutMainSection;
+}
