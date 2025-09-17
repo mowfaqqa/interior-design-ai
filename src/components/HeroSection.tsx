@@ -96,6 +96,7 @@ const HeroSection: React.FC = () => {
           </div>
 
           {/* Generator Button */}
+          <div className="flex items-center gap-4">
           <button
             className="bg-orange-400 hover:bg-orange-500 text-white px-6 py-2 rounded-full font-medium transition-colors flex items-center"
             onClick={() => router.push("/welcome")}
@@ -113,6 +114,14 @@ const HeroSection: React.FC = () => {
               />
             </svg>
           </button>
+          <button
+            className="bg-white hover:bg-orange-500/60 text-orange-500 hover:text-white px-6 py-2 rounded-full font-medium transition-colors flex items-center"
+            onClick={() => router.push("/auth/login")}
+          >
+            Sign In
+          </button>
+
+          </div>
         </div>
       </nav>
 
